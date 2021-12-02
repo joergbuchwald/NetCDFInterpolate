@@ -1,3 +1,18 @@
+# -*- coding: utf-8 -*-
+"""
+NetCDFInterpolate is a python package for easy accessing VTU/PVD files as
+outputed by Finite Element software like OpenGeoSys. It uses the VTK python
+wrapper and linear interpolation between time steps and grid points access
+any points in and and time within the simulation domain.
+
+Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+            Distributed under a Modified BSD License.
+              See accompanying file LICENSE or
+              http://www.opengeosys.org/project/license
+
+"""
+
+# pylint: disable=C0103, R0902, R0914, R0913
 import numpy as np
 import pandas as pd
 import netCDF4 as nc4
@@ -71,6 +86,7 @@ class NetCDFInterpolate:
     def get_nearest_points(self, points_interpol):
         """
         Return a dictionary with closest mesh points
+
         Parameters
         ----------
         points_interpol : `dict`
@@ -84,6 +100,7 @@ class NetCDFInterpolate:
     def get_nearest_indices(self, points_interpol):
         """
         Return a dictionary with closest mesh point indices
+
         Parameters
         ----------
         points_interpol : `dict`
