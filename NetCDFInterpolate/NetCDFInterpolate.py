@@ -5,6 +5,23 @@ from scipy.interpolate import griddata
 from scipy.interpolate import interp1d
 
 class NetCDFInterpolate:
+    """
+    Class for interpolating HDF5 griddata
+
+    Parameters
+    ----------
+    filename : `str`
+    nneighbors : `int`, optional
+                 default: 20
+    dim : `int`, optional
+          default: 3
+    one_d_axis : `int`
+                 between 0 and 2, default: 0
+    group : `str`
+                 group where to find data
+    subgrou : `str`
+                 subgroup of group where data is stored
+    """
     def __init__(self, filename, nneighbors=20, dim=3, one_d_axis=0, two_d_planenormal=2,
             group=None, subgroup=None):
         self.fileobject = nc4.Dataset(filename)
@@ -272,5 +289,9 @@ class NetCDFInterpolate:
         return resp_t_array
 
 class XDMFreader:
+    """
+    Interface for XDMF data
+
+    """
     def __init__(self):
         pass
