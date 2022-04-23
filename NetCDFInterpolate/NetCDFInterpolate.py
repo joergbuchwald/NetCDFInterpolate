@@ -5,7 +5,7 @@ outputed by Finite Element software like OpenGeoSys. It uses the VTK python
 wrapper and linear interpolation between time steps and grid points access
 any points in and and time within the simulation domain.
 
-Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
             Distributed under a Modified BSD License.
               See accompanying file LICENSE or
               http://www.opengeosys.org/project/license
@@ -16,6 +16,7 @@ Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
 import numpy as np
 import pandas as pd
 import netCDF4 as nc4
+from lxml import etree as ET
 from scipy.interpolate import griddata
 from scipy.interpolate import interp1d
 
@@ -62,7 +63,15 @@ class NetCDFInterpolate:
             self.plane = [0, 1, 2]
             self.plane.pop(two_d_planenormal)
             self.points = np.delete(self.points, two_d_planenormal, 1)
+        print("Please note: cell data can't be interpolated yet.")
+        self.xdmfdataset = None
+        try:
+            xdmffile = XDMFreader(f"{filename.split('.')[0]}.xdmf")
+            self.xdmfdataset = xdmffile.dataset
 
+
+    def __del__(self):
+        self.fileobject.close()
 
     @property
     def header(self):
@@ -345,5 +354,13 @@ class XDMFreader:
     Interface for XDMF data
 
     """
-    def __init__(self):
-        pass
+    def __init__(self, filename):
+        self.tree = ET.parse(filename)
+        grid_zero = self.tree.find("./Domain/Grid/Grid")
+        self.dataset = {}
+        attributes = grid_zero.findall("./Attribute")
+        for a in attributes:
+            child = a.find("./DataItem")
+            self.dataset[a.attrib["Name"]] = {"type": a.attrib["Center"], "datatype": child.attrib["DataType"], "dimensions": child.attrib["Dimensions"]}
+
+
