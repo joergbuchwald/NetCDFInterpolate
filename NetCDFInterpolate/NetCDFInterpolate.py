@@ -68,6 +68,8 @@ class NetCDFInterpolate:
         try:
             xdmffile = XDMFreader(f"{filename.split('.')[0]}.xdmf")
             self.xdmfdataset = xdmffile.dataset
+        except:
+            self.xdmfdataset = None
 
 
     def __del__(self):
@@ -189,7 +191,11 @@ class NetCDFInterpolate:
         if timestep is None:
             field = self.data.variables[fieldname][:]
         else:
-            field = self.data.variables[fieldname][timestep, :]
+            try:
+                field = self.data.variables[fieldname][timestep, :]
+            except IndexError:
+                print("Index out of dimension bounds.")
+                print("Time axis does probably not exist for the selected variable.")
         return field
 
     def get_point_field_names(self):
@@ -270,8 +276,8 @@ class NetCDFInterpolate:
 
         Parameters
         ----------
-        timestep : `int`
         fieldname : `str`
+        time : `float`
         pointsetarray : `array`, optional
                         default: [(0,0,0)]
         interpolation_method : `str`
